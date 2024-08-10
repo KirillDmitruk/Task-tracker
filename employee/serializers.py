@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tracker.models import Employee, Task
+from employee.models import Employee
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -9,12 +9,3 @@ class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ('first_name', 'last_name', 'middle_name', 'position')
-
-
-class TaskSerializer(serializers.ModelSerializer):
-    """Serializer for model Task."""
-
-    class Meta:
-        model = Task
-        fields = ('name', 'executor', 'deadline', 'status', 'description')
-
