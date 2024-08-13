@@ -44,10 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
 
-    'employee',
-    'task',
     'users',
-
+    'task_tracker',
 ]
 
 MIDDLEWARE = [
