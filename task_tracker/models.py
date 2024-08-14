@@ -5,7 +5,13 @@ NULLABLE = {'null': True, 'blank': True}
 
 
 class Status(models.Model):
-    name = models.CharField(max_length=200, verbose_name='наименование')
+    STATUS = (
+        ('open', 'открыта'),
+        ('in_progress', 'в процессе'),
+        ('resolved', 'решена'),
+        ('closed', 'закрыта'),
+    )
+    name = models.CharField(max_length=200, verbose_name='наименование', choices=STATUS)
 
     def __str__(self):
         return f'{self.name}'

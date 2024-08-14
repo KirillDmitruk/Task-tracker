@@ -24,7 +24,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="email")
     phone = models.CharField(max_length=35, **NULLABLE, verbose_name="phone")
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, verbose_name='должность', **NULLABLE)
-    tasks = models.ManyToManyField(Task, verbose_name='задачи', blank=True)
+    tasks = models.ManyToManyField(Task, verbose_name='задачи', related_name='users', blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
