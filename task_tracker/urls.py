@@ -2,35 +2,33 @@ from django.urls import path
 
 from task_tracker.apps import TaskTrackerConfig
 from task_tracker.views import (
-    StatusCreateAPIView,
-    StatusListAPIView,
-    StatusUpdateAPIView,
-    StatusDestroyAPIView,
-    StatusRetrieveAPIView,
-)
-from task_tracker.views import (
-    TaskCreateAPIView,
     TaskListAPIView,
+    TaskCreateAPIView,
+    TaskRetrieveAPIView,
     TaskUpdateAPIView,
     TaskDestroyAPIView,
-    TaskRetrieveAPIView,
-    ImportantTasksListAPIView
+    ImportantTaskListAPIView,
+    EmployeeListAPIView,
+    EmployeeCreateAPIView,
+    EmployeeRetrieveAPIView,
+    EmployeeUpdateAPIView,
+    EmployeeDestroyAPIView,
+    EmployeeActiveTasksListAPIView,
 )
 
-app_name: str = TaskTrackerConfig.name
+app_name = TaskTrackerConfig.name
 
 urlpatterns = [
-    # status
-    path('status/', StatusListAPIView.as_view(), name='status'),
-    path('status/create/', StatusCreateAPIView.as_view(), name='status-create'),
-    path('status/update/<int:pk>/', StatusUpdateAPIView.as_view(), name='status-update'),
-    path('status/delete/<int:pk>/', StatusDestroyAPIView.as_view(), name='status-delete'),
-    path('status/<int:pk>/', StatusRetrieveAPIView.as_view(), name='status-view'),
-    # tasks
-    path('', TaskListAPIView.as_view(), name='tasks'),
-    path('create/', TaskCreateAPIView.as_view(), name='create_task'),
-    path('update/<int:pk>/', TaskUpdateAPIView.as_view(), name='update_task'),
-    path('delete/<int:pk>/', TaskDestroyAPIView.as_view(), name='delete_task'),
-    path('<int:pk>/', TaskRetrieveAPIView.as_view(), name='view_task'),
-    path('important/', ImportantTasksListAPIView.as_view(), name='important_tasks'),
+    path("", TaskListAPIView.as_view(), name="task_list"),
+    path("important/", ImportantTaskListAPIView.as_view(), name="important_task_list"),
+    path("create/", TaskCreateAPIView.as_view(), name="task_create"),
+    path("<int:pk>/", TaskRetrieveAPIView.as_view(), name="task_retrieve"),
+    path("<int:pk>/update/", TaskUpdateAPIView.as_view(), name="task_update"),
+    path("<int:pk>/delete/", TaskDestroyAPIView.as_view(), name="task_delete"),
+    path("employee/", EmployeeListAPIView.as_view(), name="employee_list"),
+    path("employee/active_tasks/", EmployeeActiveTasksListAPIView.as_view(), name="employee_active_tasks_list"),
+    path("employee/create/", EmployeeCreateAPIView.as_view(), name="employee_create"),
+    path("employee/<int:pk>/", EmployeeRetrieveAPIView.as_view(), name="employee_retrieve"),
+    path("employee/<int:pk>/update/", EmployeeUpdateAPIView.as_view(), name="employee_update"),
+    path("employee/<int:pk>/delete/", EmployeeDestroyAPIView.as_view(), name="employee_delete"),
 ]

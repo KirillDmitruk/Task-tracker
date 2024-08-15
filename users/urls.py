@@ -1,36 +1,24 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users.apps import UsersConfig
 from users.views import (
-    PositionCreateAPIView,
-    PositionListAPIView,
-    PositionUpdateAPIView,
-    PositionDestroyAPIView,
-    PositionRetrieveAPIView,
     UserCreateAPIView,
     UserListAPIView,
+    UserRetrieveAPIView,
     UserUpdateAPIView,
     UserDestroyAPIView,
-    UserRetrieveAPIView,
-    EmployedUsersListAPIView,
-    AvailableUserForTaskRetrieveAPIView
 )
 
-app_name: str = UsersConfig.name
+app_name = UsersConfig.name
 
 urlpatterns = [
-    # positions
-    path('positions/', PositionListAPIView.as_view(), name='positions'),
-    path('positions/create/', PositionCreateAPIView.as_view(), name='positions-create'),
-    path('positions/update/<int:pk>/', PositionUpdateAPIView.as_view(), name='positions-update'),
-    path('positions/delete/<int:pk>/', PositionDestroyAPIView.as_view(), name='positions-delete'),
-    path('positions/<int:pk>/', PositionRetrieveAPIView.as_view(), name='position-view'),
-    # model user
-    path('', UserListAPIView.as_view(), name='users'),
-    path('create/', UserCreateAPIView.as_view(), name='create_user'),
-    path('update/<int:pk>/', UserUpdateAPIView.as_view(), name='update_user'),
-    path('delete/<int:pk>/', UserDestroyAPIView.as_view(), name='delete_user'),
-    path('<int:pk>/', UserRetrieveAPIView.as_view(), name='view_user'),
-    path('employed/', EmployedUsersListAPIView.as_view(), name='employed_users'),
-    path('available/<int:pk>/', AvailableUserForTaskRetrieveAPIView.as_view(), name='available_users'),
+    path("login/", TokenObtainPairView.as_view(), name="login"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("register/", UserCreateAPIView.as_view(), name="register"),
+    path("", UserListAPIView.as_view(), name="users_list"),
+    path("<int:pk>/", UserRetrieveAPIView.as_view(), name="user_retrieve"),
+    path("<int:pk>/create/", UserCreateAPIView.as_view(), name="user_create"),
+    path("<int:pk>/update/", UserUpdateAPIView.as_view(), name="user_update"),
+    path("<int:pk>/delete/", UserDestroyAPIView.as_view(), name="user_delete"),
 ]

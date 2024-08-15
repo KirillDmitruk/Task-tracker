@@ -1,22 +1,13 @@
-import os
-
 from django.core.management import BaseCommand
 
 from users.models import User
 
 
 class Command(BaseCommand):
-    """Команда создания суперпользователя"""
     def handle(self, *args, **kwargs):
-        user = User.objects.create(
-            email=os.getenv('ADMIN_EMAIL'),
-            first_name="Admin",
-            last_name="Admin",
-            is_superuser=True,
-            is_staff=True,
-            phone='',
-            is_active=True,
-        )
-
-        user.set_password(os.getenv('ADMIN_PASSWORD'))
+        user = User.objects.create(email="admin@admin.com")
+        user.set_password("password")
+        user.is_active = True
+        user.is_staff = True
+        user.is_superuser = True
         user.save()

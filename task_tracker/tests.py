@@ -1,89 +1,79 @@
+from django.urls import reverse
 from rest_framework import status
-from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from task_tracker.models import Status, Task
+from task_tracker.models import Task, Employee
 from users.models import User
 
 
-class TestTaskTracker(APITestCase):
-    """Test case Task Tracker"""
+class TaskTestCase(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create(email='admin@example.com')
-        self.client.force_authenticate(user=self.user)
-        self.status = Status.objects.create(name='В работе')
-        self.task = Task.objects.create(name='Задача 1', description='Описание задачи 1', status=self.status)
+        self.user = User.objects.create(email="testuser@mail.ru")
+        self.employee = Employee.objects.create(
+            full_name="Иванов Иван Иванович", position="инженер"
+        )
+        self.task = Task.objects.create(
+            title="TestTask1",
+            start_date="2024-09-10",
+            end_date="2024-09-10",
+            is_important=True,
+            employee=Employee.objects.get(pk=self.employee.id),
+        )
 
-    def test_create_task(self):
-        """Тест создания новой задачи"""
+    def test_task_retrieve(self):
+        url = reverse("task_tracker:task_retrieve", args=(self.task.pk,))
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data["title"], self.task.title)
 
-        url = reverse('task_tracker:create_task')
-
+    def test_task_create(self):
+        url = reverse("task_tracker:task_create")
         data = {
-            'name': 'Задача 2',
-            'description': 'Описание задачи 2',
-            'status': self.status.pk,
+            "title": "Test2Task",
+            "start_date": "2024-09-10",
+            "end_date": "2024-09-10",
+            "employee": self.employee.id,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Task.objects.count(), 2)
-        self.assertEqual(data.get('name'), 'Задача 2')
+        self.assertEqual(Task.objects.all().count(), 2)
 
-    def test_list_task(self):
-        """Тест получения списка всех задач"""
-
-        url = reverse('task_tracker:tasks')
-        data = {
-            "id": 3,
-            "name": "Задача 1",
-            "description": "string",
-            "status": 1,
-        }
-
-        response = self.client.get(url, data=data)
+    def test_task_update(self):
+        url = reverse("task_tracker:task_update", args=(self.task.pk,))
+        data = {"title": "AnotherTask"}
+        response = self.client.patch(url, data)
+        data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0].get('name'), 'Задача 1')
+        self.assertEqual(data["title"], "AnotherTask")
 
-    def test_retrieve_task(self):
-        """Тест получения информации о задаче"""
-
-        url = reverse('task_tracker:view_task', kwargs={'pk': self.task.pk})
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('name'), 'Задача 1')
-
-    def test_update_task(self):
-        """Тест изменения задачи"""
-
-        url = reverse('task_tracker:update_task', kwargs={'pk': self.task.pk})
-
-        data = {
-            'name': 'Задача 2',
-            'description': 'Описание задачи 1 updated',
-            'status': self.status.pk,
-        }
-        response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Task.objects.get(pk=self.task.pk).name, 'Задача 2')
-
-    def test_delete_task(self):
-        """Тест удаления задачи"""
-
-        url = reverse('task_tracker:delete_task', kwargs={'pk': self.task.pk})
-
+    def test_task_destroy(self):
+        url = reverse("task_tracker:task_delete", args=(self.task.pk,))
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Task.objects.count(), 0)
+        self.assertEqual(Task.objects.all().count(), 0)
 
-    def test_important_tasks(self):
-        """Тест получения списка важных задач"""
-
-        url = reverse('task_tracker:important_tasks')
-
+    def test_task_list(self):
+        url = reverse("task_tracker:task_list")
         response = self.client.get(url)
+        data = response.json()
+        print(data)
+        result = [
+            {
+                "id": self.task.pk,
+                "term_days": 0,
+                "title": "TestTask1",
+                "start_date": "2024-09-10",
+                "end_date": "2024-09-10",
+                "status": "not_started",
+                "comments": None,
+                "owner": None,
+                "is_active": True,
+                "is_important": True,
+                "parent_task": None,
+                "employee": self.task.employee.id,
+            }
+        ]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
-
+        self.assertEqual(data, result)
