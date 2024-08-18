@@ -29,7 +29,7 @@ class Task(models.Model):
 
     title = models.CharField("Название задачи", max_length=255)
     parent_task = models.ForeignKey("self", on_delete=models.CASCADE, **NULLABLE, verbose_name="Родительская задача")
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Иcполнитель")
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Иcполнитель", **NULLABLE)
     start_date = models.DateField("Дата начала")
     end_date = models.DateField("Дата окончания")
     status = models.CharField("Статус", max_length=20, choices=STATUS, default=STATUS_NOT_STARTED)
