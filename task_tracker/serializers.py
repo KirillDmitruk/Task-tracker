@@ -49,9 +49,6 @@ class TaskSerializer(ModelSerializer):
 
 
 class ImportantTaskSerializer(ModelSerializer):
-    term_days = SerializerMethodField()
-    current_employees = SerializerMethodField()
-    parent_task_title = SerializerMethodField()
     available_employees = SerializerMethodField()
 
     def get_current_employees(self, task):
@@ -97,10 +94,6 @@ class ImportantTaskSerializer(ModelSerializer):
         model = Task
         fields = (
             "title",
-            "parent_task_title",
-            "start_date",
             "end_date",
-            "term_days",
-            "current_employees",
             "available_employees",
         )
